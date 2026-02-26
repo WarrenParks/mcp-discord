@@ -2,14 +2,16 @@ import { Client } from "discord.js";
 import { z } from "zod";
 import { ToolResponse, ToolContext, ToolHandler } from "./types.js";
 import { loginHandler } from './login.js';
-import { sendMessageHandler } from './send-message.js';
+import { sendMessageHandler, editMessageHandler } from './send-message.js';
 import {
   getForumChannelsHandler,
   createForumPostHandler,
   getForumPostHandler,
   listForumThreadsHandler,
   replyToForumHandler,
-  deleteForumPostHandler
+  deleteForumPostHandler,
+  getForumTagsHandler,
+  updateForumPostHandler
 } from './forum.js';
 import {
   createTextChannelHandler,
@@ -47,6 +49,9 @@ export {
   listForumThreadsHandler,
   replyToForumHandler,
   deleteForumPostHandler,
+  getForumTagsHandler,
+  updateForumPostHandler,
+  editMessageHandler,
   createTextChannelHandler,
   deleteChannelHandler,
   readMessagesHandler,

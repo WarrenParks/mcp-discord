@@ -16,6 +16,9 @@ import {
   listForumThreadsHandler,
   replyToForumHandler,
   deleteForumPostHandler,
+  getForumTagsHandler,
+  updateForumPostHandler,
+  editMessageHandler,
   createTextChannelHandler,
   deleteChannelHandler,
   readMessagesHandler,
@@ -124,6 +127,21 @@ export class DiscordMCPServer {
           case "discord_delete_forum_post":
             this.logClientState("before discord_delete_forum_post handler");
             toolResponse = await deleteForumPostHandler(args, this.toolContext);
+            return toolResponse;
+
+          case "discord_get_forum_tags":
+            this.logClientState("before discord_get_forum_tags handler");
+            toolResponse = await getForumTagsHandler(args, this.toolContext);
+            return toolResponse;
+
+          case "discord_update_forum_post":
+            this.logClientState("before discord_update_forum_post handler");
+            toolResponse = await updateForumPostHandler(args, this.toolContext);
+            return toolResponse;
+
+          case "discord_edit_message":
+            this.logClientState("before discord_edit_message handler");
+            toolResponse = await editMessageHandler(args, this.toolContext);
             return toolResponse;
 
           case "discord_create_text_channel":

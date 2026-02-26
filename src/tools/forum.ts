@@ -1,5 +1,5 @@
 import { ChannelType, ForumChannel } from 'discord.js';
-import { GetForumChannelsSchema, CreateForumPostSchema, GetForumPostSchema, ListForumThreadsSchema, ReplyToForumSchema, DeleteForumPostSchema } from '../schemas.js';
+import { GetForumChannelsSchema, CreateForumPostSchema, GetForumPostSchema, ListForumThreadsSchema, ReplyToForumSchema, DeleteForumPostSchema, GetForumTagsSchema, UpdateForumPostSchema } from '../schemas.js';
 import { ToolHandler } from './types.js';
 import { handleDiscordError } from "../errorHandler.js";
 
@@ -280,7 +280,7 @@ export const replyToForumHandler: ToolHandler = async (args, { client }) => {
 
 export const deleteForumPostHandler: ToolHandler = async (args, { client }) => {
   const { threadId, reason } = DeleteForumPostSchema.parse(args);
-  
+
   try {
     if (!client.isReady()) {
       return {
@@ -301,12 +301,113 @@ export const deleteForumPostHandler: ToolHandler = async (args, { client }) => {
     await thread.delete(reason || "Forum post deleted via API");
 
     return {
-      content: [{ 
-        type: "text", 
-        text: `Successfully deleted forum post/thread with ID: ${threadId}` 
+      content: [{
+        type: "text",
+        text: `Successfully deleted forum post/thread with ID: ${threadId}`
       }]
     };
   } catch (error) {
     return handleDiscordError(error);
   }
-}; 
+};
+
+export const getForumTagsHandler: ToolHandler = async (args, { client }) => {
+  const { forumChannelId } = GetForumTagsSchema.parse(args);
+
+  try {
+    if (!client.isReady()) {
+      return {
+        content: [{ type: "text", text: "Discord client not logged in." }],
+        isError: true
+      };
+    }
+
+    const channel = await client.channels.fetch(forumChannelId);
+    if (!channel || channel.type !== ChannelType.GuildForum) {
+      return {
+        content: [{ type: "text", text: `Channel ID ${forumChannelId} is not a forum channel.` }],
+        isError: true
+      };
+    }
+
+    const forumChannel = channel as ForumChannel;
+    const tags = forumChannel.availableTags.map(tag => ({
+      id: tag.id,
+      name: tag.name,
+      moderated: tag.moderated,
+      emoji: tag.emoji ? (tag.emoji.name || tag.emoji.id) : null
+    }));
+
+    return {
+      content: [{ type: "text", text: JSON.stringify(tags, null, 2) }]
+    };
+  } catch (error) {
+    return handleDiscordError(error);
+  }
+};
+
+export const updateForumPostHandler: ToolHandler = async (args, { client }) => {
+  const { threadId, name, tags, archived, locked } = UpdateForumPostSchema.parse(args);
+
+  try {
+    if (!client.isReady()) {
+      return {
+        content: [{ type: "text", text: "Discord client not logged in." }],
+        isError: true
+      };
+    }
+
+    const thread = await client.channels.fetch(threadId);
+    if (!thread || !thread.isThread()) {
+      return {
+        content: [{ type: "text", text: `Cannot find thread with ID: ${threadId}` }],
+        isError: true
+      };
+    }
+
+    const editOptions: any = {};
+    if (name !== undefined) editOptions.name = name;
+    if (archived !== undefined) editOptions.archived = archived;
+    if (locked !== undefined) editOptions.locked = locked;
+
+    // Resolve tag names to IDs if tags are provided
+    if (tags !== undefined) {
+      const parent = thread.parent;
+      if (parent && parent.type === ChannelType.GuildForum) {
+        const forumChannel = parent as ForumChannel;
+        const availableTags = forumChannel.availableTags;
+        const tagIds = tags.map(tagInput => {
+          // Accept either tag name or tag ID
+          const byName = availableTags.find(t => t.name === tagInput);
+          if (byName) return byName.id;
+          const byId = availableTags.find(t => t.id === tagInput);
+          if (byId) return byId.id;
+          return null;
+        }).filter((id): id is string => id !== null);
+        editOptions.appliedTags = tagIds;
+      } else {
+        return {
+          content: [{ type: "text", text: `Thread's parent channel is not a forum channel. Tags can only be applied to forum posts.` }],
+          isError: true
+        };
+      }
+    }
+
+    const updated = await thread.edit(editOptions);
+
+    const changes: string[] = [];
+    if (name !== undefined) changes.push(`name → "${name}"`);
+    if (tags !== undefined) changes.push(`tags → [${tags.join(', ')}]`);
+    if (archived !== undefined) changes.push(`archived → ${archived}`);
+    if (locked !== undefined) changes.push(`locked → ${locked}`);
+
+    return {
+      content: [{
+        type: "text",
+        text: `Successfully updated forum post ${threadId}: ${changes.join(', ')}`
+      }]
+    };
+  } catch (error) {
+    return handleDiscordError(error);
+  }
+};
