@@ -129,13 +129,14 @@ export const toolList = [
   },
   {
     name: "discord_create_text_channel",
-    description: "Creates a new text channel in a Discord server with an optional topic",
+    description: "Creates a new text channel in a Discord server with an optional topic and parent category",
     inputSchema: {
       type: "object",
       properties: {
         guildId: { type: "string" },
         channelName: { type: "string" },
-        topic: { type: "string" }
+        topic: { type: "string" },
+        parentId: { type: "string", description: "The ID of the parent category to create the channel under" }
       },
       required: ["guildId", "channelName"]
     }

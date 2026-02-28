@@ -40,6 +40,7 @@ export const CreateTextChannelSchema = z.object({
     guildId: z.string(),
     channelName: z.string(),
     topic: z.string().optional(),
+    parentId: z.string().optional(),
     reason: z.string().optional()
 });
 

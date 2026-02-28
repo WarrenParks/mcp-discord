@@ -110,7 +110,7 @@ export async function createTextChannelHandler(
   args: unknown, 
   context: ToolContext
 ): Promise<ToolResponse> {
-  const { guildId, channelName, topic, reason } = CreateTextChannelSchema.parse(args);
+  const { guildId, channelName, topic, parentId, reason } = CreateTextChannelSchema.parse(args);
   try {
     if (!context.client.isReady()) {
       return {
@@ -133,13 +133,14 @@ export async function createTextChannelHandler(
       type: ChannelType.GuildText
     };
     if (topic) channelOptions.topic = topic;
+    if (parentId) channelOptions.parent = parentId;
     if (reason) channelOptions.reason = reason;
     const channel = await guild.channels.create(channelOptions);
 
     return {
-      content: [{ 
-        type: "text", 
-        text: `Successfully created text channel "${channelName}" with ID: ${channel.id}` 
+      content: [{
+        type: "text",
+        text: `Successfully created text channel "${channelName}" with ID: ${channel.id}`
       }]
     };
   } catch (error) {
