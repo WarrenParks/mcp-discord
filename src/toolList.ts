@@ -141,6 +141,20 @@ export const toolList = [
     }
   },
   {
+    name: "discord_create_forum_channel",
+    description: "Creates a new forum channel in a Discord server, optionally under a category",
+    inputSchema: {
+      type: "object",
+      properties: {
+        guildId: { type: "string" },
+        name: { type: "string" },
+        topic: { type: "string", description: "The forum channel guidelines/description" },
+        parentId: { type: "string", description: "The ID of the parent category to create the channel under" }
+      },
+      required: ["guildId", "name"]
+    }
+  },
+  {
     name: "discord_delete_channel",
     description: "Deletes a Discord channel with an optional reason",
     inputSchema: {
