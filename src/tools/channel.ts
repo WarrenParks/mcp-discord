@@ -1,9 +1,11 @@
 import { z } from "zod";
 import { ChannelType } from "discord.js";
 import { ToolContext, ToolResponse } from "./types.js";
-import { 
-  CreateTextChannelSchema, 
-  DeleteChannelSchema, 
+import {
+  CreateTextChannelSchema,
+  CreateForumChannelSchema,
+  EditChannelSchema,
+  DeleteChannelSchema,
   ReadMessagesSchema,
   CreateCategorySchema,
   EditCategorySchema,
@@ -141,6 +143,96 @@ export async function createTextChannelHandler(
       content: [{
         type: "text",
         text: `Successfully created text channel "${channelName}" with ID: ${channel.id}`
+      }]
+    };
+  } catch (error) {
+    return handleDiscordError(error);
+  }
+}
+
+// Forum channel creation handler
+export async function createForumChannelHandler(
+  args: unknown,
+  context: ToolContext
+): Promise<ToolResponse> {
+  const { guildId, name, topic, parentId, reason } = CreateForumChannelSchema.parse(args);
+  try {
+    if (!context.client.isReady()) {
+      return {
+        content: [{ type: "text", text: "Discord client not logged in." }],
+        isError: true
+      };
+    }
+
+    const guild = await context.client.guilds.fetch(guildId);
+    if (!guild) {
+      return {
+        content: [{ type: "text", text: `Cannot find guild with ID: ${guildId}` }],
+        isError: true
+      };
+    }
+
+    const channelOptions: any = {
+      name,
+      type: ChannelType.GuildForum
+    };
+    if (topic) channelOptions.topic = topic;
+    if (parentId) channelOptions.parent = parentId;
+    if (reason) channelOptions.reason = reason;
+    const channel = await guild.channels.create(channelOptions);
+
+    return {
+      content: [{
+        type: "text",
+        text: `Successfully created forum channel "${name}" with ID: ${channel.id}`
+      }]
+    };
+  } catch (error) {
+    return handleDiscordError(error);
+  }
+}
+
+// Channel edit handler (rename, move, change topic)
+export async function editChannelHandler(
+  args: unknown,
+  context: ToolContext
+): Promise<ToolResponse> {
+  const { channelId, name, topic, parentId, position, reason } = EditChannelSchema.parse(args);
+  try {
+    if (!context.client.isReady()) {
+      return {
+        content: [{ type: "text", text: "Discord client not logged in." }],
+        isError: true
+      };
+    }
+
+    const channel = await context.client.channels.fetch(channelId);
+    if (!channel) {
+      return {
+        content: [{ type: "text", text: `Cannot find channel with ID: ${channelId}` }],
+        isError: true
+      };
+    }
+
+    if (!('edit' in channel)) {
+      return {
+        content: [{ type: "text", text: "This channel type does not support editing." }],
+        isError: true
+      };
+    }
+
+    const update: any = {};
+    if (name) update.name = name;
+    if (topic !== undefined) update.topic = topic;
+    if (parentId !== undefined) update.parent = parentId;
+    if (typeof position === "number") update.position = position;
+    if (reason) update.reason = reason;
+    await channel.edit(update);
+
+    return {
+      content: [{
+        type: "text",
+        text: `Successfully edited channel with ID: ${channelId}`
       }]
     };
   } catch (error) {

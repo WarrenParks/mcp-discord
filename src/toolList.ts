@@ -142,6 +142,36 @@ export const toolList = [
     }
   },
   {
+    name: "discord_create_forum_channel",
+    description: "Creates a new forum channel in a Discord server, optionally under a category",
+    inputSchema: {
+      type: "object",
+      properties: {
+        guildId: { type: "string" },
+        name: { type: "string" },
+        topic: { type: "string", description: "The forum channel guidelines/description" },
+        parentId: { type: "string", description: "The ID of the parent category to create the channel under" }
+      },
+      required: ["guildId", "name"]
+    }
+  },
+  {
+    name: "discord_edit_channel",
+    description: "Edits a Discord channel's name, topic, parent category, or position",
+    inputSchema: {
+      type: "object",
+      properties: {
+        channelId: { type: "string", description: "The ID of the channel to edit" },
+        name: { type: "string", description: "New name for the channel" },
+        topic: { type: "string", description: "New topic for the channel" },
+        parentId: { type: "string", description: "The ID of a category to move the channel under" },
+        position: { type: "number", description: "New position of the channel in the list" },
+        reason: { type: "string", description: "Reason for editing (shown in audit log)" }
+      },
+      required: ["channelId"]
+    }
+  },
+  {
     name: "discord_delete_channel",
     description: "Deletes a Discord channel with an optional reason",
     inputSchema: {

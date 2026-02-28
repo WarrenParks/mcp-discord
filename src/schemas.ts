@@ -44,6 +44,23 @@ export const CreateTextChannelSchema = z.object({
     reason: z.string().optional()
 });
 
+export const CreateForumChannelSchema = z.object({
+    guildId: z.string(),
+    name: z.string(),
+    topic: z.string().optional(),
+    parentId: z.string().optional(),
+    reason: z.string().optional()
+});
+
+export const EditChannelSchema = z.object({
+    channelId: z.string(),
+    name: z.string().optional(),
+    topic: z.string().optional(),
+    parentId: z.string().optional(),
+    position: z.number().optional(),
+    reason: z.string().optional()
+});
+
 // Category schemas
 export const CreateCategorySchema = z.object({
     guildId: z.string(),

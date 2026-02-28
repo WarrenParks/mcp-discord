@@ -2,7 +2,7 @@ import { Client } from "discord.js";
 import { z } from "zod";
 import { ToolResponse, ToolContext, ToolHandler } from "./types.js";
 import { loginHandler } from './login.js';
-import { sendMessageHandler } from './send-message.js';
+import { sendMessageHandler, editMessageHandler } from './send-message.js';
 import {
   getForumChannelsHandler,
   createForumPostHandler,
@@ -13,14 +13,16 @@ import {
 } from './forum.js';
 import {
   createTextChannelHandler,
+  createForumChannelHandler,
+  editChannelHandler,
   deleteChannelHandler,
   readMessagesHandler,
   createCategoryHandler,
   editCategoryHandler,
   deleteCategoryHandler
 } from './channel.js';
-import { 
-  getServerInfoHandler, 
+import {
+  getServerInfoHandler,
   listServersHandler,
   searchMessagesHandler
 } from "./server.js";
@@ -47,7 +49,10 @@ export {
   listForumThreadsHandler,
   replyToForumHandler,
   deleteForumPostHandler,
+  editMessageHandler,
   createTextChannelHandler,
+  createForumChannelHandler,
+  editChannelHandler,
   deleteChannelHandler,
   readMessagesHandler,
   getServerInfoHandler,
@@ -72,4 +77,4 @@ export { ToolResponse, ToolContext, ToolHandler };
 // Create tool context
 export function createToolContext(client: Client): ToolContext {
   return { client };
-} 
+}
