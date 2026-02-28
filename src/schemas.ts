@@ -119,6 +119,24 @@ export const DeleteForumPostSchema = z.object({
     reason: z.string().optional()
 });
 
+export const GetForumTagsSchema = z.object({
+    forumChannelId: z.string()
+});
+
+export const UpdateForumPostSchema = z.object({
+    threadId: z.string(),
+    name: z.string().optional(),
+    tags: z.array(z.string()).optional(),
+    archived: z.boolean().optional(),
+    locked: z.boolean().optional()
+});
+
+export const EditMessageSchema = z.object({
+    channelId: z.string(),
+    messageId: z.string(),
+    content: z.string()
+});
+
 export const DeleteMessageSchema = z.object({
     channelId: z.string(),
     messageId: z.string(),

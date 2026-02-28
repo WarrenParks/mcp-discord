@@ -9,7 +9,9 @@ import {
   getForumPostHandler,
   listForumThreadsHandler,
   replyToForumHandler,
-  deleteForumPostHandler
+  deleteForumPostHandler,
+  getForumTagsHandler,
+  updateForumPostHandler
 } from './forum.js';
 import {
   createTextChannelHandler,
@@ -49,6 +51,8 @@ export {
   listForumThreadsHandler,
   replyToForumHandler,
   deleteForumPostHandler,
+  getForumTagsHandler,
+  updateForumPostHandler,
   editMessageHandler,
   createTextChannelHandler,
   createForumChannelHandler,

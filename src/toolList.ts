@@ -267,6 +267,45 @@ export const toolList = [
     }
   },
   {
+    name: "discord_get_forum_tags",
+    description: "Gets all available tags for a Discord forum channel, including tag IDs, names, and emoji",
+    inputSchema: {
+      type: "object",
+      properties: {
+        forumChannelId: { type: "string", description: "The ID of the forum channel to get tags from" }
+      },
+      required: ["forumChannelId"]
+    }
+  },
+  {
+    name: "discord_update_forum_post",
+    description: "Updates a forum post's title, applied tags, archived status, or locked status. Tags can be specified by name or ID.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        threadId: { type: "string", description: "The ID of the forum post/thread to update" },
+        name: { type: "string", description: "New title for the forum post" },
+        tags: { type: "array", items: { type: "string" }, description: "Tags to apply (by name or ID). Replaces all existing tags." },
+        archived: { type: "boolean", description: "Whether to archive or unarchive the post" },
+        locked: { type: "boolean", description: "Whether to lock or unlock the post" }
+      },
+      required: ["threadId"]
+    }
+  },
+  {
+    name: "discord_edit_message",
+    description: "Edits a message previously sent by the bot. Only messages authored by the bot can be edited.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        channelId: { type: "string", description: "The ID of the channel containing the message" },
+        messageId: { type: "string", description: "The ID of the message to edit" },
+        content: { type: "string", description: "The new content for the message" }
+      },
+      required: ["channelId", "messageId", "content"]
+    }
+  },
+  {
     name: "discord_delete_message",
     description: "Deletes a specific message from a Discord text channel",
     inputSchema: {
