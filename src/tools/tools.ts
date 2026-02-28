@@ -13,6 +13,7 @@ import {
 } from './forum.js';
 import {
   createTextChannelHandler,
+  editChannelHandler,
   deleteChannelHandler,
   readMessagesHandler,
   createCategoryHandler,
@@ -48,6 +49,7 @@ export {
   replyToForumHandler,
   deleteForumPostHandler,
   createTextChannelHandler,
+  editChannelHandler,
   deleteChannelHandler,
   readMessagesHandler,
   getServerInfoHandler,

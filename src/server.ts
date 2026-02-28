@@ -17,6 +17,7 @@ import {
   replyToForumHandler,
   deleteForumPostHandler,
   createTextChannelHandler,
+  editChannelHandler,
   deleteChannelHandler,
   readMessagesHandler,
   getServerInfoHandler,
@@ -129,6 +130,11 @@ export class DiscordMCPServer {
           case "discord_create_text_channel":
             this.logClientState("before discord_create_text_channel handler");
             toolResponse = await createTextChannelHandler(args, this.toolContext);
+            return toolResponse;
+
+          case "discord_edit_channel":
+            this.logClientState("before discord_edit_channel handler");
+            toolResponse = await editChannelHandler(args, this.toolContext);
             return toolResponse;
 
           case "discord_delete_channel":
