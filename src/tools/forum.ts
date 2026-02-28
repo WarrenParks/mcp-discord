@@ -1,5 +1,5 @@
 import { ChannelType, ForumChannel } from 'discord.js';
-import { GetForumChannelsSchema, CreateForumPostSchema, GetForumPostSchema, ListForumThreadsSchema, ReplyToForumSchema, DeleteForumPostSchema, GetForumTagsSchema, UpdateForumPostSchema } from '../schemas.js';
+import { GetForumChannelsSchema, CreateForumPostSchema, GetForumPostSchema, ListForumThreadsSchema, ReplyToForumSchema, DeleteForumPostSchema, GetForumTagsSchema, UpdateForumPostSchema, SetForumTagsSchema } from '../schemas.js';
 import { ToolHandler } from './types.js';
 import { handleDiscordError } from "../errorHandler.js";
 
@@ -413,6 +413,46 @@ export const updateForumPostHandler: ToolHandler = async (args, { client }) => {
       content: [{
         type: "text",
         text: `Successfully updated forum post ${threadId}: ${changes.join(', ')}`
+      }]
+    };
+  } catch (error) {
+    return handleDiscordError(error);
+  }
+};
+
+export const setForumTagsHandler: ToolHandler = async (args, { client }) => {
+  const { forumChannelId, tags } = SetForumTagsSchema.parse(args);
+
+  try {
+    if (!client.isReady()) {
+      return {
+        content: [{ type: "text", text: "Discord client not logged in." }],
+        isError: true
+      };
+    }
+
+    const channel = await client.channels.fetch(forumChannelId);
+    if (!channel || channel.type !== ChannelType.GuildForum) {
+      return {
+        content: [{ type: "text", text: `Channel ID ${forumChannelId} is not a forum channel.` }],
+        isError: true
+      };
+    }
+
+    const forumChannel = channel as ForumChannel;
+
+    const availableTags = tags.map(tag => ({
+      name: tag.name,
+      emoji: tag.emoji ? { name: tag.emoji, id: null } : null,
+      moderated: tag.moderated ?? false
+    }));
+
+    await forumChannel.edit({ availableTags });
+
+    return {
+      content: [{
+        type: "text",
+        text: `Successfully set ${tags.length} tags on forum channel ${forumChannelId}: ${tags.map(t => t.emoji ? `${t.emoji} ${t.name}` : t.name).join(', ')}`
       }]
     };
   } catch (error) {

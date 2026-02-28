@@ -278,6 +278,30 @@ export const toolList = [
     }
   },
   {
+    name: "discord_set_forum_tags",
+    description: "Sets the available tags for a Discord forum channel. Replaces all existing tags.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        forumChannelId: { type: "string", description: "The ID of the forum channel to set tags on" },
+        tags: {
+          type: "array",
+          description: "Array of tag objects to set on the forum channel",
+          items: {
+            type: "object",
+            properties: {
+              name: { type: "string", description: "Tag name" },
+              emoji: { type: "string", description: "Unicode emoji for the tag (e.g. '🔬')" },
+              moderated: { type: "boolean", description: "Whether only moderators can apply this tag (default: false)" }
+            },
+            required: ["name"]
+          }
+        }
+      },
+      required: ["forumChannelId", "tags"]
+    }
+  },
+  {
     name: "discord_update_forum_post",
     description: "Updates a forum post's title, applied tags, archived status, or locked status. Tags can be specified by name or ID.",
     inputSchema: {

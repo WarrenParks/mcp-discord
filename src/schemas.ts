@@ -131,6 +131,15 @@ export const UpdateForumPostSchema = z.object({
     locked: z.boolean().optional()
 });
 
+export const SetForumTagsSchema = z.object({
+    forumChannelId: z.string(),
+    tags: z.array(z.object({
+        name: z.string(),
+        emoji: z.string().optional(),
+        moderated: z.boolean().optional()
+    }))
+});
+
 export const EditMessageSchema = z.object({
     channelId: z.string(),
     messageId: z.string(),
